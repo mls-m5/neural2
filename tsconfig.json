@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"removeComments": true,
+		"outFile": "./build/build.js",
+		"sourceMap": true,
+		"rootDir": "./src/"
+	}
+}
