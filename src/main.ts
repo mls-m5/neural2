@@ -3,8 +3,11 @@
 
 
 class TrainingSet {
-	constructor(public x: number[], public y: number[]) {
-
+	x: number[];
+	y: number[];
+	constructor(values: number[][]) {
+		this.x = values[0];
+		this.y = values[1];
 	}
 }
 
@@ -15,7 +18,6 @@ let types = Object.freeze({
 });
 
 
-
 class Network {
 	layers: Unit[][] = [];
 	connections: Connection[] = [];
@@ -23,11 +25,10 @@ class Network {
 	learningRate: number = .1;
 
 	constructor() {
-		this.createUnitLayers(2, 2, 3, 2);
+		this.createUnitLayers(2, 2, 4, 5);
 		this.connectAllLayers();
 		this.setTrainingSet(new TrainingSet(
-			[1, 0],
-			[1, 0]
+			[[1, 0],[1, 0]]
 		));
 	}
 
@@ -134,9 +135,9 @@ class Network {
 		//Output error: räkna ut för alla på utlagret
 		{
 			let layer = this.layers[this.layers.length - 1];
-			console.log("output layer:");
+			//console.log("output layer:");
 			for (let j in layer) {
-				layer[j].d = layer[j].a - this.trainingSet.y[j];
+				layer[j].d = (layer[j].a - this.trainingSet.y[j]) * layer[j].sigma_prim;
 			}
 		}
 		//Backpgropagate: Räkna ut felet för resten av nätet
@@ -147,7 +148,7 @@ class Network {
 					unit.d = 0;
 					//Backpropagate value (sum how much difference this node can make)
 					for (let connection of unit.to) {
-						unit.d += connection.to.d * connection.weight;
+						unit.d += connection.to.d * connection.weight * unit.sigma_prim;
 					}
 				}
 			}
@@ -161,7 +162,7 @@ class Network {
 			}
 		}
 
-		console.log(this.totalError());
+		//console.log(this.totalError());
 	}
 
 	totalError() {
@@ -184,6 +185,7 @@ class Unit {
 	to: Connection[];
 
 	z: number = 0; //The net sum of imput
+	sigma_prim: number = 0;
 	a: number = Math.random(); //z calculated through the activation function
 	d: number = 0; //The error, written as delta in examples
 
@@ -200,6 +202,7 @@ class Unit {
 			this.z += connection.weight * connection.from.a;
 		}
 		this.a = activationFunction(this.z);
+		this.sigma_prim = activationDerivative(this.z);
 	}
 
 	correctError(learningRate: number) {
@@ -250,6 +253,18 @@ class Connection {
 var network: Network;
 
 
+var trainingSets = [
+	[[0, 0], [0, 1]],
+	[[0, 1], [1, 0]],
+	[[1, 0], [1, 1]],
+	[[1, 1], [0, 0]],
+];
+
+var currentTrainingSet = 3;
+var cumulatedError = 0;
+var drawInterval = 100;
+var generation = 0;
+
 function init() {
 	canvas = <HTMLCanvasElement> document.getElementById("canvas");
 	ctx = <CanvasRenderingContext2D> canvas.getContext("2d");
@@ -259,12 +274,31 @@ function init() {
 	network.draw();
 
 
+	//canvas.onclick = 
+	setInterval(function() {
+		//console.log("next training set: " + currentTrainingSet);
 
-	canvas.onclick = function() {
-		//network = new Network();
+		network.setTrainingSet(new TrainingSet(trainingSets[currentTrainingSet]));
+
 		network.calculate();
-		network.draw();
-	}
+
+		if (--drawInterval <= 0) {
+			drawInterval = 101;
+			network.draw();
+		}
+		++generation;
+
+		cumulatedError += network.totalError();
+
+		if (++currentTrainingSet > 3) {
+			currentTrainingSet = 0;
+			if (drawInterval == 1) {
+				console.log("mean error: " + cumulatedError / 4 + " generation: " + generation);
+			}
+
+			cumulatedError = 0;
+		}
+	}, 5);
 }
 
 
