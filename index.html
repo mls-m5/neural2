@@ -7,16 +7,70 @@
 		<script src="build/build.js"></script>
 		<style>
 			canvas {
-				border: 1px solid;
+				
+			}
+
+			button {
+				font-size: 40px;
 			}
 		</style>
 	</head>
 	<body onload="init()">
-
 		<canvas id="canvas" width="800" height="400"></canvas>
-		<strong>Ett neuralt nätverk som lär sig att räkna ut när prickarna till höger kommer att vara tända, med prickarna till vänster som ledtråd</strong>
+		<p>
+			<button onclick="start()">starta</button>
+			<button onclick="stop()">stoppa</button>
+		</p>
+		
+		<table style="text-align: left">
+			<tr>
+				<th>
+					Antal lager
+				</th>
+				<th>
+					<select onchange="setNumberOfLayers(this.value)">
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option selected="selected">5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+					</select>
+				</th>
+			<tr>
+			<tr>
+				<th>
+					Antal dolda neuroner
+				</th>
+				<th>
+					<select onchange="setNumberOfNeurons(this.value)">
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option selected="selected">5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+					</select>
+				</th>
+			</tr>
+			<tr>
+				<th>
+					Typ av problem
+				</th>
+				<th>
+					<select onchange="setTrainingSets(this.value)">
+						<option>and</option>
+						<option>or</option>
+						<option>xor</option>
+						<option selected="selected">count</option>
+					</select>
+				</th>
+			</tr>
+		</table>
 
 
-		Att göra: räkna ut nätverket innan b och w ändras, istället för att som nu ändra värdena varje gång man byter träningsset
+		<strong>Ett neuralt nätverk som lär sig från från olika träningsset</strong>
 	</body>
 </html>
