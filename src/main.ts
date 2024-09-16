@@ -54,21 +54,22 @@ var standardInputs = [
 	[1, 1]
 ];
 
-var alternativeTrainingSets = {"count": [
+var alternativeTrainingSets = {
+	"count": [
 		[[0, 0], [0, 1]],
 		[[0, 1], [1, 0]],
 		[[1, 0], [1, 1]],
 		[[1, 1], [0, 0]],
-	].map(function(row) {
+	].map(function (row) {
 		return new TrainingSet(row);
 	}),
-	"and": standardInputs.map(function(x) {
+	"and": standardInputs.map(function (x) {
 		return new TrainingSet([x, [x[0] && x[1]]]);
 	}),
-	"or": standardInputs.map(function(x) {
+	"or": standardInputs.map(function (x) {
 		return new TrainingSet([x, [x[0] || x[1]]]);
 	}),
-	"xor": standardInputs.map(function(x) {
+	"xor": standardInputs.map(function (x) {
 		return new TrainingSet([x, [x[0] ? x[1] : x[1]]]);
 	})
 };
@@ -105,7 +106,7 @@ function setTrainingSets(setName: string) {
 function start() {
 	running = true;
 
-	var calculate = function() {
+	var calculate = function () {
 		for (let i = 0; i < 100; ++i) {
 			network.calculate();
 
@@ -125,13 +126,13 @@ function start() {
 	calculate();
 }
 
-function stop() {
+function stopSteps(): void {
 	running = false;
 }
 
 function init() {
-	canvas = <HTMLCanvasElement> document.getElementById("canvas");
-	ctx = <CanvasRenderingContext2D> canvas.getContext("2d");
+	canvas = <HTMLCanvasElement>document.getElementById("canvas");
+	ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 	ctx.lineCap = "round";
 
 	createNewNetwork();
